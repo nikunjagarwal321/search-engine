@@ -2,6 +2,7 @@ package com.searchengine.indexservice.services;
 
 import com.searchengine.indexservice.constants.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
 public class IndexingServiceImpl implements IndexingService{
 
     HashSet<String> stopWordsSet;
+
+    @Autowired
+    PorterStemmingService porterStemmingService;
 
     public IndexingServiceImpl(){
         this.stopWordsSet = new HashSet(Arrays.stream(Constants.stopWords.split(",")).collect(Collectors.toSet()));
@@ -35,7 +39,7 @@ public class IndexingServiceImpl implements IndexingService{
                         document.split("[\\W]+"))
                 .map(s -> s.toLowerCase())
                 .filter(s -> isRelevantWord(s))
-                .map(s -> stemWord(s))
+                .map(s -> porterStemmingService.stemWord(s))
                 .collect(Collectors.groupingBy(s -> s, Collectors.counting())));
         long timeTakenToIndex = Duration.between(t1, LocalDateTime.now()).toMillis();
         log.info("Time taken in millisec : {}", timeTakenToIndex);
