@@ -57,4 +57,7 @@ public interface StemmingConstants {
     String eed = "eed";
     String ing = "ing";
     String ed = "ed";
+    String at = "at";
+    String bl = "bl";
+    String iz = "iz";
 }
