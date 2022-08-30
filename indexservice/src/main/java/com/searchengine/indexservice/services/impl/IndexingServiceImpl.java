@@ -1,6 +1,7 @@
-package com.searchengine.indexservice.services;
+package com.searchengine.indexservice.services.impl;
 
 import com.searchengine.indexservice.constants.Constants;
+import com.searchengine.indexservice.services.IndexingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,12 +15,12 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class IndexingServiceImpl implements IndexingService{
+public class IndexingServiceImpl implements IndexingService {
 
     HashSet<String> stopWordsSet;
 
     @Autowired
-    PorterStemmingService porterStemmingService;
+    PorterStemmingServiceImpl porterStemmingService;
 
     public IndexingServiceImpl(){
         this.stopWordsSet = new HashSet(Arrays.stream(Constants.stopWords.split(",")).collect(Collectors.toSet()));
