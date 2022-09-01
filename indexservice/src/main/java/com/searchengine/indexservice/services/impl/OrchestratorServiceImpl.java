@@ -1,11 +1,12 @@
 package com.searchengine.indexservice.services.impl;
 
+import com.searchengine.indexservice.constants.IndexingServiceEnum;
 import com.searchengine.indexservice.models.HtmlDocument;
 import com.searchengine.indexservice.models.SQSHtmlMetadata;
-import com.searchengine.indexservice.services.IndexingService;
 import com.searchengine.indexservice.services.OrchestratorService;
-import com.searchengine.indexservice.services.ParserService;
 import com.searchengine.indexservice.services.UrlsHandlerService;
+import com.searchengine.indexservice.services.factory.IndexingServiceFactory;
+import com.searchengine.indexservice.services.factory.ParserFactory;
 import com.searchengine.indexservice.utils.JSONUtils;
 import com.searchengine.indexservice.utils.S3Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,13 @@ import software.amazon.awssdk.services.sqs.model.Message;
 @Service
 public class OrchestratorServiceImpl implements OrchestratorService {
     @Autowired
-    ParserService parserService;
-    @Autowired
     UrlsHandlerService urlsHandlerService;
+
     @Autowired
-    IndexingService indexingService;
+    ParserFactory parserFactory;
+
+    @Autowired
+    IndexingServiceFactory indexingServiceFactory;
 
     /**
      * Step 1 : Download html file from s3
@@ -36,10 +39,13 @@ public class OrchestratorServiceImpl implements OrchestratorService {
     @Override
     public void startOrchestration(Message message) throws Exception {
         SQSHtmlMetadata sqsHtmlMetadata = JSONUtils.convertStringToObject(message.body(), SQSHtmlMetadata.class);
+        if(sqsHtmlMetadata.getStatus().isError()) {
+            urlsHandlerService.updateCrawlingErrorUrls(sqsHtmlMetadata);
+            return;
+        }
         String s3FileContents = S3Utils.download(sqsHtmlMetadata.getS3Path());
-        HtmlDocument htmlDocument = parserService.parseHtmlDocument(sqsHtmlMetadata, s3FileContents);
-        urlsHandlerService.insertChildUrlsInRdsAndSqs(htmlDocument);
-        indexingService.createAndInsertInvertedIndexInDB(sqsHtmlMetadata, htmlDocument);
-        return;
+        HtmlDocument htmlDocument = parserFactory.getParser(sqsHtmlMetadata.getUrl()).parseHtmlDocument(sqsHtmlMetadata, s3FileContents);
+        urlsHandlerService.insertChildUrlsInRdsAndSqs(sqsHtmlMetadata, htmlDocument);
+        indexingServiceFactory.getIndexingService(IndexingServiceEnum.ELASTIC_SEARCH).createAndInsertInvertedIndexInDB(htmlDocument);
     }
 }

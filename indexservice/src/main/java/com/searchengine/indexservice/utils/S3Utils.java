@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 @Service
 public class S3Utils {
 
+    //TODO: modify the functions if we use file instead of string
     private static S3Client s3Client = S3Client.builder().region(Region.AP_SOUTH_1).build();
 
     @Value("${bucket}")

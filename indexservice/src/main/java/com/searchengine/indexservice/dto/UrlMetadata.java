@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UrlMetadata {
+    //TODO: Change this to url id post integration with RDS
     private String url;
     private Integer count;
+    private Boolean isPresentInTitle;
+    private Double customScore;
+
 }
