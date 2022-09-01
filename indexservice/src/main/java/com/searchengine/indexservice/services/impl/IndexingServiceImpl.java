@@ -1,6 +1,9 @@
 package com.searchengine.indexservice.services.impl;
 
 import com.searchengine.indexservice.constants.Constants;
+import com.searchengine.indexservice.models.HtmlDocument;
+import com.searchengine.indexservice.models.SQSHtmlMetadata;
+import com.searchengine.indexservice.repository.UrlMappingRepository;
 import com.searchengine.indexservice.services.IndexingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +25,25 @@ public class IndexingServiceImpl implements IndexingService {
     @Autowired
     PorterStemmingServiceImpl porterStemmingService;
 
+
+    @Autowired
+    UrlMappingRepository urlMappingRepository;
+
+
     public IndexingServiceImpl(){
         this.stopWordsSet = new HashSet(Arrays.stream(Constants.stopWords.split(",")).collect(Collectors.toSet()));
     }
+
+    /**
+     * Creates inverted index and inserts the inverted index in DB
+     * @param sqsHtmlMetadata
+     * @param htmlDocument
+     */
+    @Override
+    public void createAndInsertInvertedIndexInDB(SQSHtmlMetadata sqsHtmlMetadata, HtmlDocument htmlDocument){
+
+    }
+
 
     /**
      * Extracts words from document, converts them to lowercase,
@@ -34,7 +53,9 @@ public class IndexingServiceImpl implements IndexingService {
      * @return :
      */
     @Override
-    public HashMap<String, Integer> createIndex(String document) {
+    public HashMap<String, Integer> createInvertedIndexFromDocument(String document) {
+        log.info(String.valueOf(urlMappingRepository.findAll()));
+
         LocalDateTime t1 = LocalDateTime.now();
         HashMap<String, Integer> listOfRelevantWords = new HashMap(Arrays.stream(
                         document.split("[\\W]+"))

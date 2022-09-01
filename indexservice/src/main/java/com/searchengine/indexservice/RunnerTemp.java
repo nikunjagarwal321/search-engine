@@ -22,7 +22,7 @@ public class RunnerTemp implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        HashMap<String, Integer> listOfWords = indexingService.createIndex(sampleDoc);
+        HashMap<String, Integer> listOfWords = indexingService.createInvertedIndexFromDocument(sampleDoc);
         log.info("List of words : {}", listOfWords);
     }
 }

@@ -22,12 +22,12 @@ import java.nio.file.Paths;
 @Service
 public class S3Utils {
 
-    private S3Client s3Client = S3Client.builder().region(Region.AP_SOUTH_1).build();
+    private static S3Client s3Client = S3Client.builder().region(Region.AP_SOUTH_1).build();
 
     @Value("${bucket}")
-    private String bucketName;
+    private static String bucketName;
 
-    public void upload(String s3Filename, String localFilePath){
+    public static void upload(String s3Filename, String localFilePath){
         log.info("Inside upload");
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -41,7 +41,7 @@ public class S3Utils {
         log.info("File uploaded successfully");
     }
 
-    public String download(String s3Filename) {
+    public static String download(String s3Filename) {
         log.info("Inside download");
         GetObjectRequest getObject = GetObjectRequest.builder()
                 .bucket(bucketName)
@@ -52,7 +52,7 @@ public class S3Utils {
         return convertS3FileToString(response);
     }
 
-    public void delete(String s3Filename){
+    public static void delete(String s3Filename){
         log.info("Inside delete");
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
@@ -62,7 +62,7 @@ public class S3Utils {
         log.info("File deleted successfully : {}", response.toString());
     }
 
-    private String convertS3FileToString(ResponseInputStream<GetObjectResponse> response){
+    private static String convertS3FileToString(ResponseInputStream<GetObjectResponse> response){
         BufferedReader reader = new BufferedReader(new InputStreamReader(response));
         String line;
         String file = "";
