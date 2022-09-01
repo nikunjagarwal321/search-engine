@@ -31,9 +31,9 @@ public class IndexingHelper {
      * @param :
      * @return :
      */
-    public HashMap<String, Integer> getTokenizedFilteredStemmedWordsWithCount(String document) {
+    public HashMap<String, Long> getTokenizedFilteredStemmedWordsWithCount(String document) {
         log.info("Tokenize filter and stem words from document : {}", document);
-        HashMap<String, Integer> stemmedWordAndCount = new HashMap(Arrays.stream(
+        HashMap<String, Long> stemmedWordAndCount = new HashMap(Arrays.stream(
                         document.split("[\\W]+"))
                 .map(s -> s.toLowerCase())
                 .filter(s -> isRelevantWord(s))

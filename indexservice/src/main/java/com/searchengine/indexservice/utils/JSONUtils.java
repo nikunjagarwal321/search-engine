@@ -14,7 +14,11 @@ public class JSONUtils {
        return objectMapper.readValue(string, className);
    }
 
-    public static <T> String convertObjectToString(T object) throws IOException{
+    public static <T> String convertObjectToString(T object) throws IOException {
         return objectMapper.writeValueAsString(object);
+    }
+
+    public static <T> T convertObjectToObject(Object object, Class<T> className) {
+        return objectMapper.convertValue(object, className);
     }
 }

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class UrlMetadata {
     //TODO: Change this to url id post integration with RDS
     private String url;
-    private Integer count;
+    private Long count;
     private Boolean isPresentInTitle;
     private Double customScore;
 
