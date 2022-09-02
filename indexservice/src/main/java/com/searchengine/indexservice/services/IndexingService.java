@@ -1,8 +1,9 @@
 package com.searchengine.indexservice.services;
 
-import java.util.HashMap;
+import com.searchengine.indexservice.models.HtmlDocument;
+
 
 public interface IndexingService {
 
-    HashMap<String, Integer>  createIndex(String document);
+    void createAndInsertInvertedIndexInDB(HtmlDocument htmlDocument);
 }
