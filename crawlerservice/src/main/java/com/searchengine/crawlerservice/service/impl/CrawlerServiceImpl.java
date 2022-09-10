@@ -25,22 +25,22 @@ public class CrawlerServiceImpl implements CrawlerService {
 
         ThreadPoolExecutor crawlWorkerExecutor = configFactory.getThreadPool("crawlWorker");
 
-        for (CrawlRequest crawlRequest: urlMapping.getUrls()) {
+        for (CrawlRequest crawlRequest : urlMapping.getUrls()) {
             if (crawlRequest.getRetryCount() >= 3) {
-                log.info("Failed to crawl : {} after {} retries ", crawlRequest.getUrl() , crawlRequest.getRetryCount());
+                log.info("Failed to crawl : {} after {} retries ", crawlRequest.getUrl(), crawlRequest.getRetryCount());
                 return;
             }
             CrawlWorker crawlWorker = new CrawlWorker(crawlRequest);
             crawlWorkerExecutor.submit(crawlWorker);
-            log.info("Sent url : {} for Crawling",crawlRequest.getUrl());
+            log.info("Sent url : {} for Crawling", crawlRequest.getUrl());
         }
 
     }
 
     private UrlMapping createUrlMapping(List<String> urls) {
         UrlMapping urlMapping = new UrlMapping();
-        for(String url: urls) {
-            CrawlRequest crawlRequest = new CrawlRequest(url,0);
+        for (String url : urls) {
+            CrawlRequest crawlRequest = new CrawlRequest(url, 0);
             urlMapping.getUrls().add(crawlRequest);
         }
         return urlMapping;

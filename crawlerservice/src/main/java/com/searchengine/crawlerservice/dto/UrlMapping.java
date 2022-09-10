@@ -18,13 +18,5 @@ public class UrlMapping {
         this.urls = new ArrayList<>();
     }
 
-    public List<CrawlRequest> getUrls() {
-        return urls;
-    }
-
-    public void setUrls(List<CrawlRequest> urls) {
-        this.urls = urls;
-    }
-
     private List<CrawlRequest> urls;
 }
