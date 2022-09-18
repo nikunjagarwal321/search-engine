@@ -16,5 +16,5 @@ import java.util.List;
 @NoArgsConstructor
 public class UrlMapping {
     @Field(type= FieldType.Object)
-    private List<UrlMetadata> urls;
+    private List<SearchTermUrlMetadata> urls;
 }

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 
 @Slf4j
 @Component
@@ -27,6 +26,6 @@ public class RunnerTemp implements CommandLineRunner {
     @Override
     public void run(String... args) {
         HtmlDocument htmlDocument = HtmlDocument.builder().body(sampleDoc).title("Sample Check").url("www.google.com").urlId(1).build();
-        indexingServiceFactory.getIndexingService(IndexingServiceEnum.ELASTIC_SEARCH).createAndInsertInvertedIndexInDB(htmlDocument);
+        indexingServiceFactory.getIndexingService(IndexingServiceEnum.FILE_BASED).createAndInsertInvertedIndexInDB(htmlDocument);
     }
 }

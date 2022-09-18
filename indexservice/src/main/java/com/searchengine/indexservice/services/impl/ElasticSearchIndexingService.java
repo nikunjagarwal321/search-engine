@@ -1,7 +1,7 @@
 package com.searchengine.indexservice.services.impl;
 
 import com.searchengine.indexservice.dto.UrlMapping;
-import com.searchengine.indexservice.dto.UrlMetadata;
+import com.searchengine.indexservice.dto.SearchTermUrlMetadata;
 import com.searchengine.indexservice.models.HtmlDocument;
 import com.searchengine.indexservice.services.IndexingService;
 import com.searchengine.indexservice.utils.JSONUtils;
@@ -45,7 +45,7 @@ public class ElasticSearchIndexingService implements IndexingService {
         for(Map.Entry<String, Long> wordWithCount : bodyWordsWithCount.entrySet()){
             UrlMapping urlMapping = new UrlMapping(
                     Collections.singletonList(
-                            UrlMetadata.builder().
+                            SearchTermUrlMetadata.builder().
                                     url(htmlDocument.getUrl()).
                                     count(wordWithCount.getValue()).
                                     isPresentInTitle(titleWords.containsKey(wordWithCount.getKey())).

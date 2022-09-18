@@ -46,6 +46,6 @@ public class OrchestratorServiceImpl implements OrchestratorService {
         String s3FileContents = S3Utils.download(sqsHtmlMetadata.getS3Path());
         HtmlDocument htmlDocument = parserFactory.getParser(sqsHtmlMetadata.getUrl()).parseHtmlDocument(sqsHtmlMetadata, s3FileContents);
         urlsHandlerService.insertChildUrlsInRdsAndSqs(sqsHtmlMetadata, htmlDocument);
-        indexingServiceFactory.getIndexingService(IndexingServiceEnum.ELASTIC_SEARCH).createAndInsertInvertedIndexInDB(htmlDocument);
+        indexingServiceFactory.getIndexingService(IndexingServiceEnum.FILE_BASED).createAndInsertInvertedIndexInDB(htmlDocument);
     }
 }

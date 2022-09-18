@@ -1,5 +1,7 @@
 package com.searchengine.indexservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UrlMetadata {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SearchTermUrlMetadata {
     //TODO: Change this to url id post integration with RDS
     private String url;
     private Long count;
