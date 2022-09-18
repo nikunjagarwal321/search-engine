@@ -10,6 +10,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Created by amankumarkeshu on 3/9/22.
+ * Factory creates threadpool for crawling worker.
+ */
 @Component
 public class ConfigFactory implements ApplicationListener<ContextRefreshedEvent> {
 
