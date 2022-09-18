@@ -1,6 +1,7 @@
-package com.searchengine.searchservice.service;
+package com.searchengine.searchservice.service.impl;
 
 import com.searchengine.searchservice.constants.StemmingConstants;
+import com.searchengine.searchservice.service.StemmingService;
 import com.searchengine.searchservice.util.PorterStemmingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
  * created by nikunjagarwal on 18-09-2022
  */
 @Service
-public class PorterStemmingServiceImpl implements StemmingService{
+public class PorterStemmingServiceImpl implements StemmingService {
     @Autowired
     PorterStemmingUtil porterStemmingUtil;
 

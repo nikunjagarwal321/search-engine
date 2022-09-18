@@ -1,7 +1,7 @@
 package com.searchengine.searchservice.controller;
 
 import com.searchengine.searchservice.model.SearchRequest;
-import com.searchengine.searchservice.service.SearchServiceImpl;
+import com.searchengine.searchservice.service.impl.SearchServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

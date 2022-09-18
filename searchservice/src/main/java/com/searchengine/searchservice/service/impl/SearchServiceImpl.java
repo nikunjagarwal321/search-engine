@@ -1,9 +1,12 @@
-package com.searchengine.searchservice.service;
+package com.searchengine.searchservice.service.impl;
 
 import com.searchengine.searchservice.model.SearchRequest;
 import com.searchengine.searchservice.model.SearchResponse;
 import com.searchengine.searchservice.model.SearchTermUrlMetadata;
 import com.searchengine.searchservice.model.UrlMetadataResponse;
+import com.searchengine.searchservice.service.DatabaseSearchService;
+import com.searchengine.searchservice.service.RankingService;
+import com.searchengine.searchservice.service.SearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +21,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class SearchServiceImpl implements SearchService{
+public class SearchServiceImpl implements SearchService {
 
     @Autowired
     private RankingService rankingService;

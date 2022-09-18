@@ -26,7 +26,8 @@ public class SQSListenerImpl {
 
     private SqsClient sqsClient = SqsClient.builder().region(Region.AP_SOUTH_1).build();
 
-    @Scheduled(fixedRate = 10000)
+    /*add once we enable sqs read*/
+//    @Scheduled(fixedRate = 10000)
     public void poll() {
         receiveMessage();
     }

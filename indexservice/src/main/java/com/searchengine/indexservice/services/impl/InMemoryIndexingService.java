@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * created by nikunjagarwal on 17-09-2022
@@ -53,7 +50,9 @@ public class InMemoryIndexingService implements IndexingService {
                 if(globalInvertedIndex.containsKey(wordAndMetadata.getKey())) {
                     globalInvertedIndex.get(wordAndMetadata.getKey()).add(wordAndMetadata.getValue());
                 } else {
-                    globalInvertedIndex.put(wordAndMetadata.getKey(), Collections.singletonList(wordAndMetadata.getValue()));
+                    List<SearchTermUrlMetadata> newSearchTermUrlList = new ArrayList<>();
+                    newSearchTermUrlList.add(wordAndMetadata.getValue());
+                    globalInvertedIndex.put(wordAndMetadata.getKey(), newSearchTermUrlList);
                 }
             }
             FileHandlerUtil.writeToFile(invertedIndexFilepath, JSONUtils.convertObjectToString(globalInvertedIndex));

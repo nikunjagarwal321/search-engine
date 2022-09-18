@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AWSConfig {
 
-//    @Value("${queueUrl}")
-//    String queueUrl;
+    @Value("${queueUrl}")
+    String queueUrl;
 
     @Bean
     public AmazonSQSClient amazonSQSClient() {

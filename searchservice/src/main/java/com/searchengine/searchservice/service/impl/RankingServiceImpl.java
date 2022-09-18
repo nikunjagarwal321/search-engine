@@ -1,8 +1,9 @@
-package com.searchengine.searchservice.service;
+package com.searchengine.searchservice.service.impl;
 
 import com.searchengine.searchservice.model.SearchRequest;
 import com.searchengine.searchservice.model.SearchTermUrlMetadata;
 import com.searchengine.searchservice.model.UrlMetadataResponse;
+import com.searchengine.searchservice.service.RankingService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

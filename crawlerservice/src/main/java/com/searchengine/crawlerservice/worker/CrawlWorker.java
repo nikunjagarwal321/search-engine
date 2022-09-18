@@ -43,7 +43,7 @@ public class CrawlWorker implements Runnable {
                 if (response.statusCode() == 200) {
                     //TODO: Add more checks to verify partial pages
                     log.info("Url Crawled Successfully: {}", crawlRequest.getUrl());
-                    awsUtil.addToS3("product-scraper-oregon-beta", crawlRequest.getUrl(),doc);
+                    awsUtil.addToS3("scraper-beta", crawlRequest.getUrl(),doc);
 
 
                     // 1. Push doc to the s3
