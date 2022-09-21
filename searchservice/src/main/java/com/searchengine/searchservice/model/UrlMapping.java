@@ -3,7 +3,7 @@ package com.searchengine.searchservice.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Document("search_mapping")
 public class UrlMapping {
-    @Id
+    @Indexed
     private String searchTerm;
     private List<SearchTermUrlMetadata> urls;
 }

@@ -14,4 +14,5 @@ public class UrlMetadataResponse {
     private String url;
     private String urlTitle;
     private Integer rank;
+    private Double rankingScore;
 }

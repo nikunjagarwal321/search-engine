@@ -1,6 +1,7 @@
-package com.searchengine.searchservice.service;
+package com.searchengine.searchservice.service.helper;
 
 import com.searchengine.searchservice.constants.Constants;
+import com.searchengine.searchservice.service.StemmingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -7,7 +7,7 @@ import lombok.Data;
  */
 @Data
 public class SearchTermUrlMetadata {
-    private String url;
+    private Long urlId;
     private Long count;
     private Boolean isPresentInTitle;
     private Double customScore;
