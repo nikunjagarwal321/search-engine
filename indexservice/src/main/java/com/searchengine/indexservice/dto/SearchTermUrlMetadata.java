@@ -16,8 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SearchTermUrlMetadata {
-    //TODO: Change this to url id post integration with RDS
-    private String url;
+    private Long urlId;
     private Long count;
     private Boolean isPresentInTitle;
     private Double customScore;

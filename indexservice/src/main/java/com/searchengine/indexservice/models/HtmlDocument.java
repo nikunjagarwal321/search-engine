@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class HtmlDocument {
-    private Integer urlId;
+    private Long urlId;
     private String url;
     private String title;
     private String body;

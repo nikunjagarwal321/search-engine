@@ -2,8 +2,8 @@ package com.searchengine.indexservice.services.factory;
 
 import com.searchengine.indexservice.constants.IndexingServiceEnum;
 import com.searchengine.indexservice.services.IndexingService;
-import com.searchengine.indexservice.services.impl.ElasticSearchIndexingService;
 import com.searchengine.indexservice.services.impl.InMemoryIndexingService;
+import com.searchengine.indexservice.services.impl.MongoDBIndexingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,18 +14,18 @@ import org.springframework.stereotype.Service;
 public class IndexingServiceFactory {
 
     @Autowired
-    ElasticSearchIndexingService elasticSearchIndexingService;
+    InMemoryIndexingService inMemoryIndexingService;
 
     @Autowired
-    InMemoryIndexingService inMemoryIndexingService;
+    MongoDBIndexingService mongoDBIndexingService;
 
     public IndexingService getIndexingService(IndexingServiceEnum indexingService) {
         switch (indexingService) {
-            case ELASTIC_SEARCH:
-                return elasticSearchIndexingService;
             case FILE_BASED:
                 return inMemoryIndexingService;
+            case MONGO_DB:
+                return mongoDBIndexingService;
         }
-        return elasticSearchIndexingService;
+        return mongoDBIndexingService;
     }
 }

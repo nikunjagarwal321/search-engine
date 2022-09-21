@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SQSHtmlMetadata {
-    private Integer urlId;
+    private Long urlId;
     private String url;
     private String redirectedUrl;
     private HttpStatus status;

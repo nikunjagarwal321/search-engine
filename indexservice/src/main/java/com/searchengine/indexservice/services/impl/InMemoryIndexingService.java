@@ -35,7 +35,7 @@ public class InMemoryIndexingService implements IndexingService {
         HashMap<String, Long> titleWords = indexingHelper.getTokenizedFilteredStemmedWordsWithCount(htmlDocument.getTitle());
         for(Map.Entry<String, Long> wordWithCount : bodyWordsWithCount.entrySet()) {
             SearchTermUrlMetadata urlMetadata = SearchTermUrlMetadata.builder().
-                    url(htmlDocument.getUrl()).
+                    urlId(htmlDocument.getUrlId()).
                     count(wordWithCount.getValue()).
                     isPresentInTitle(titleWords.containsKey(wordWithCount.getKey())).
                     build();
