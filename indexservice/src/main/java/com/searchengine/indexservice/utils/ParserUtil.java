@@ -5,8 +5,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * created by nikunjagarwal on 19-09-2022
@@ -14,9 +14,9 @@ import java.util.List;
 @Service
 public class ParserUtil {
 
-    public List<String> getChildUrls(Document document) {
+    public Set<String> getChildUrls(Document document) {
         Elements links = document.select("a[href]");
-        List<String> hrefs = new ArrayList<>();
+        Set<String> hrefs = new HashSet<>();
         for (Element link: links) {
             hrefs.add(link.attr("href"));
         }

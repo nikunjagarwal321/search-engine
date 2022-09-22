@@ -5,6 +5,7 @@ import com.searchengine.indexservice.dto.SearchTermUrlMetadata;
 import com.searchengine.indexservice.dto.UrlMapping;
 import com.searchengine.indexservice.models.HtmlDocument;
 import com.searchengine.indexservice.services.IndexingService;
+import com.searchengine.indexservice.services.helper.IndexingHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;

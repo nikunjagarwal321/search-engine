@@ -7,6 +7,7 @@ import com.searchengine.indexservice.services.OrchestratorService;
 import com.searchengine.indexservice.services.UrlsHandlerService;
 import com.searchengine.indexservice.services.factory.IndexingServiceFactory;
 import com.searchengine.indexservice.services.factory.ParserFactory;
+import com.searchengine.indexservice.utils.FileHandlerUtil;
 import com.searchengine.indexservice.utils.JSONUtils;
 import com.searchengine.indexservice.utils.S3Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class OrchestratorServiceImpl implements OrchestratorService {
         String s3FileContents = S3Utils.download(bucketName, sqsHtmlMetadata.getS3Path());
         HtmlDocument htmlDocument = parserFactory.getParser(sqsHtmlMetadata.getUrl()).parseHtmlDocument(sqsHtmlMetadata, s3FileContents);
         urlsHandlerService.insertChildUrlsInRdsAndSqs(sqsHtmlMetadata, htmlDocument);
-        indexingServiceFactory.getIndexingService(IndexingServiceEnum.FILE_BASED).createAndInsertInvertedIndexInDB(htmlDocument);
+        indexingServiceFactory.getIndexingService(IndexingServiceEnum.MONGO_DB).createAndInsertInvertedIndexInDB(htmlDocument);
     }
 
     //TODO : only for testing, remove later
@@ -59,9 +60,10 @@ public class OrchestratorServiceImpl implements OrchestratorService {
             urlsHandlerService.updateCrawlingErrorUrls(sqsHtmlMetadata);
             return;
         }
-        String s3FileContents = S3Utils.download(bucketName, sqsHtmlMetadata.getS3Path());
+//        String s3FileContents = S3Utils.download(bucketName, sqsHtmlMetadata.getS3Path());
+        String s3FileContents = FileHandlerUtil.readFromFile(sqsHtmlMetadata.getS3Path());
         HtmlDocument htmlDocument = parserFactory.getParser(sqsHtmlMetadata.getUrl()).parseHtmlDocument(sqsHtmlMetadata, s3FileContents);
         urlsHandlerService.insertChildUrlsInRdsAndSqs(sqsHtmlMetadata, htmlDocument);
-        indexingServiceFactory.getIndexingService(IndexingServiceEnum.MONGO_DB).createAndInsertInvertedIndexInDB(htmlDocument);
+//        indexingServiceFactory.getIndexingService(IndexingServiceEnum.MONGO_DB).createAndInsertInvertedIndexInDB(htmlDocument);
     }
 }

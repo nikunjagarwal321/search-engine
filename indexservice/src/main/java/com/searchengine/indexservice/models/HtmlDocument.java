@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * created by nikunjagarwal on 01-09-2022
@@ -19,5 +19,5 @@ public class HtmlDocument {
     private String url;
     private String title;
     private String body;
-    private List<String> childUrls;
+    private Set<String> childUrls;
 }
