@@ -1,4 +1,4 @@
-package com.searchengine.crawlerservice.Util;
+package com.searchengine.crawlerservice.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

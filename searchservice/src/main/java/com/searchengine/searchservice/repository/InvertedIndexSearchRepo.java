@@ -1,12 +1,12 @@
-package com.searchengine.searchservice.service;
+package com.searchengine.searchservice.repository;
 
-import com.searchengine.searchservice.model.UrlMapping;
+import com.searchengine.searchservice.entity.UrlMapping;
 
 import java.util.List;
 
 /**
  * created by nikunjagarwal on 18-09-2022
  */
-public interface DatabaseSearchService {
+public interface InvertedIndexSearchRepo {
     List<UrlMapping> getRelevantUrlsFromSearchTerms(List<String> searchTerms);
 }

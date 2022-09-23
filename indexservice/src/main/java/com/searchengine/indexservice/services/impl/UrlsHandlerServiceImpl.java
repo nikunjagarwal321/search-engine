@@ -1,10 +1,10 @@
 package com.searchengine.indexservice.services.impl;
 
-import com.searchengine.indexservice.dto.CrawlStatus;
-import com.searchengine.indexservice.dto.UrlMetadata;
-import com.searchengine.indexservice.models.CrawlerUrlMetadata;
-import com.searchengine.indexservice.models.HtmlDocument;
-import com.searchengine.indexservice.models.SQSHtmlMetadata;
+import com.searchengine.indexservice.entity.CrawlStatus;
+import com.searchengine.indexservice.entity.UrlMetadata;
+import com.searchengine.indexservice.dto.CrawlerUrlMetadata;
+import com.searchengine.indexservice.dto.HtmlDocument;
+import com.searchengine.indexservice.dto.SQSHtmlMetadata;
 import com.searchengine.indexservice.repository.UrlMetadataRepository;
 import com.searchengine.indexservice.services.UrlsHandlerService;
 import com.searchengine.indexservice.utils.CrawledUrlsCounter;
@@ -116,6 +116,12 @@ public class UrlsHandlerServiceImpl implements UrlsHandlerService {
         }
     }
 
+    /**
+     * Only sends for crawling if number of pages to be crawled are within a given upper limit
+     * This is done so that we do not unnecessarily crawl 1000s of pages as we are using AWS resources
+     * that can lead to increased costs
+     * @param message
+     */
     private void sendToSQSForCrawling(String message){
         if(CrawledUrlsCounter.canSendForCrawling()){
             sqsListener.sendMessage(message);

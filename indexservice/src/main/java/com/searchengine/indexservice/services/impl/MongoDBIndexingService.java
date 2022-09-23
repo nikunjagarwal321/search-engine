@@ -1,11 +1,10 @@
 package com.searchengine.indexservice.services.impl;
 
 import com.mongodb.bulk.BulkWriteResult;
-import com.searchengine.indexservice.dto.SearchTermUrlMetadata;
-import com.searchengine.indexservice.dto.UrlMapping;
-import com.searchengine.indexservice.models.HtmlDocument;
+import com.searchengine.indexservice.entity.SearchTermUrlMetadata;
+import com.searchengine.indexservice.entity.UrlMapping;
+import com.searchengine.indexservice.dto.HtmlDocument;
 import com.searchengine.indexservice.services.IndexingService;
-import com.searchengine.indexservice.services.helper.IndexingHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -31,10 +30,18 @@ public class MongoDBIndexingService implements IndexingService {
     @Autowired
     IndexingHelper indexingHelper;
 
+    /**
+     * Creates inverted index and inserts in mongo database
+     * Step 1: Tokenize html, filter and stem words
+     * Step 2: Iterate over each word and create bulk request which will append urls if word is already present or insert if new word
+     * Step 3: Execute bulk request
+     * @param htmlDocument
+     */
     @Override
     public void createAndInsertInvertedIndexInDB(HtmlDocument htmlDocument) {
         HashMap<String, Long> bodyWordsWithCount = indexingHelper.getTokenizedFilteredStemmedWordsWithCount(htmlDocument.getBody());
         HashMap<String, Long> titleWords = indexingHelper.getTokenizedFilteredStemmedWordsWithCount(htmlDocument.getTitle());
+        //TODO: Error Handling
         BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, UrlMapping.class);
         for(Map.Entry<String, Long> wordWithCount : bodyWordsWithCount.entrySet()){
             Query searchTermQuery = Query.query(Criteria.where("searchTerm").is(wordWithCount.getKey()));

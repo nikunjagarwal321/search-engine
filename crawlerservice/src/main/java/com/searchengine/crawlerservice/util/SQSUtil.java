@@ -1,4 +1,4 @@
-package com.searchengine.crawlerservice.Util;
+package com.searchengine.crawlerservice.util;
 
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.SendMessageRequest;

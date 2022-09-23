@@ -1,7 +1,7 @@
 package com.searchengine.indexservice.repository;
 
-import com.searchengine.indexservice.dto.CrawlStatus;
-import com.searchengine.indexservice.dto.UrlMetadata;
+import com.searchengine.indexservice.entity.CrawlStatus;
+import com.searchengine.indexservice.entity.UrlMetadata;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * created by nikunjagarwal on 22-09-2022

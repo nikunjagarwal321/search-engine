@@ -1,6 +1,6 @@
 package com.searchengine.indexservice;
 
-import com.searchengine.indexservice.models.SQSHtmlMetadata;
+import com.searchengine.indexservice.dto.SQSHtmlMetadata;
 import com.searchengine.indexservice.services.UrlsHandlerService;
 import com.searchengine.indexservice.services.impl.OrchestratorServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +25,19 @@ public class Controller {
     @Autowired
     UrlsHandlerService urlsHandlerService;
 
-
+    /**
+     * Api to insert new urls in DB and send for crawling
+     * @param newUrls
+     * @throws Exception
+     */
     @PostMapping("/start")
     public void insertNewUrlsForCrawling(@RequestBody List<String> newUrls) throws Exception {
         urlsHandlerService.insertNewUrlsForCrawling(newUrls);
     }
 
+    /**
+     * Temporary test api to test the flow via api triggers
+     */
     @PostMapping("/test")
     public void test(@RequestBody SQSHtmlMetadata message) throws Exception{
         orchestratorService.startOrchestration(message);

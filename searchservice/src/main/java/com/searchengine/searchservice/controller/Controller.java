@@ -1,6 +1,6 @@
 package com.searchengine.searchservice.controller;
 
-import com.searchengine.searchservice.model.SearchRequest;
+import com.searchengine.searchservice.dto.SearchRequest;
 import com.searchengine.searchservice.service.impl.SearchServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

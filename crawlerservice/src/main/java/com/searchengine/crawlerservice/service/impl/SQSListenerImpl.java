@@ -2,7 +2,7 @@ package com.searchengine.crawlerservice.service.impl;
 
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.*;
-import com.searchengine.crawlerservice.Util.JSONUtil;
+import com.searchengine.crawlerservice.util.JSONUtil;
 import com.searchengine.crawlerservice.dto.CrawlerUrlMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

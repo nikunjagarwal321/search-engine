@@ -1,6 +1,9 @@
 package com.searchengine.searchservice.service.impl;
 
-import com.searchengine.searchservice.model.*;
+import com.searchengine.searchservice.dto.*;
+import com.searchengine.searchservice.entity.SearchTermUrlMetadata;
+import com.searchengine.searchservice.entity.UrlMapping;
+import com.searchengine.searchservice.entity.UrlMetadata;
 import com.searchengine.searchservice.service.RankingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,21 +17,26 @@ import java.util.*;
 @Service
 public class RankingServiceImpl implements RankingService {
 
+    //TODO: this class needs to be refactored, ranking algo also needs to be changed
+
     @Override
-    public List<UrlMetadataResponse> rankResults(SearchRequest searchRequest, List<UrlMapping> dbSearchResults) {
+    public List<UrlMetadataResponse> rankResults(SearchRequest searchRequest, List<UrlMapping> dbSearchResults, Map<Long, UrlMetadata> urlMetadataMap) {
         log.info("Started Ranking results");
         List<UrlMetadataResponse> urlMetadataResponses = new ArrayList<>();
-        List<UrlRankingMetadata> urlRankingMetadataList = getCombinedUrlRankingMetadata(dbSearchResults);
+        List<UrlRankingMetadata> urlRankingMetadataList = getCombinedUrlRankingMetadata(dbSearchResults, urlMetadataMap);
         updateWordCountRank(urlRankingMetadataList);
         updateTitlePresenceCountRank(urlRankingMetadataList);
         updatePagerankRank(urlRankingMetadataList);
         computeWeightedRank(urlRankingMetadataList);
         urlRankingMetadataList.sort(Comparator.comparing(UrlRankingMetadata::getWeightedRank));
         log.info("Urls after computing weighted rank and sorting : {}", urlRankingMetadataList);
+        int currentRank = 1;
         for(UrlRankingMetadata urlRankingMetadata: urlRankingMetadataList) {
             urlMetadataResponses.add(
                     UrlMetadataResponse.builder().
-                            url(urlRankingMetadata.getUrlId().toString()).
+                            url(urlMetadataMap.get(urlRankingMetadata.getUrlId()).getUrl()).
+                            urlTitle(urlMetadataMap.get(urlRankingMetadata.getUrlId()).getTitle()).
+                            rank(currentRank++).
                             rankingScore(urlRankingMetadata.getWeightedRank()).
                             build()
             );
@@ -42,7 +50,7 @@ public class RankingServiceImpl implements RankingService {
      * @param dbSearchResults
      * @return
      */
-    private List<UrlRankingMetadata> getCombinedUrlRankingMetadata(List<UrlMapping> dbSearchResults) {
+    private List<UrlRankingMetadata> getCombinedUrlRankingMetadata(List<UrlMapping> dbSearchResults, Map<Long, UrlMetadata> urlMetadataMap) {
         log.info("Getting Combined Url Metadata");
         Map<Long, UrlRankingMetadata> urlRankingMetadataMap = new HashMap<>();
         for (UrlMapping urlMapping: dbSearchResults) {
@@ -59,7 +67,7 @@ public class RankingServiceImpl implements RankingService {
                             urlId(searchTermUrlMetadata.getUrlId()).
                             wordCount(searchTermUrlMetadata.getCount()).
                             titlePresenceCount(searchTermUrlMetadata.getIsPresentInTitle() ? (long) 1 : 0).
-                            pageRankCount((long)0). //TODO: change in future
+                            pageRankCount((long)urlMetadataMap.get(searchTermUrlMetadata.getUrlId()).getPageRank()).
                             build();
                 }
                 urlRankingMetadataMap.put(urlRankingMetadata.getUrlId(), urlRankingMetadata);

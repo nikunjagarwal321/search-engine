@@ -1,4 +1,4 @@
-package com.searchengine.searchservice.model;
+package com.searchengine.searchservice.entity;
 
 import lombok.Data;
 

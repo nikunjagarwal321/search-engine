@@ -1,8 +1,9 @@
-package com.searchengine.searchservice.service;
+package com.searchengine.searchservice.service.impl;
 
 import com.searchengine.searchservice.constants.DBType;
-import com.searchengine.searchservice.service.impl.FileDatabaseSearchService;
-import com.searchengine.searchservice.service.impl.MongoDatabaseSearchService;
+import com.searchengine.searchservice.repository.InvertedIndexSearchRepo;
+import com.searchengine.searchservice.repository.FileDBSearchRepo;
+import com.searchengine.searchservice.repository.MongoDBSearchRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,15 +11,15 @@ import org.springframework.stereotype.Service;
  * created by nikunjagarwal on 21-09-2022
  */
 @Service
-public class DatabaseSearchServiceFactory {
+public class DBSearchRepoFactory {
 
     @Autowired
-    private FileDatabaseSearchService fileDatabaseSearchService;
+    private FileDBSearchRepo fileDatabaseSearchService;
 
     @Autowired
-    private MongoDatabaseSearchService mongoDatabaseSearchService;
+    private MongoDBSearchRepo mongoDatabaseSearchService;
 
-    public DatabaseSearchService getDatabaseSearchService(DBType dbType) {
+    public InvertedIndexSearchRepo getDatabaseSearchService(DBType dbType) {
         switch (dbType) {
             case FILE_BASED:
                 return fileDatabaseSearchService;

@@ -1,7 +1,7 @@
 package com.searchengine.indexservice.services.impl;
 
-import com.searchengine.indexservice.models.HtmlDocument;
-import com.searchengine.indexservice.models.SQSHtmlMetadata;
+import com.searchengine.indexservice.dto.HtmlDocument;
+import com.searchengine.indexservice.dto.SQSHtmlMetadata;
 import com.searchengine.indexservice.services.ParserService;
 import com.searchengine.indexservice.utils.ParserUtil;
 import lombok.extern.slf4j.Slf4j;

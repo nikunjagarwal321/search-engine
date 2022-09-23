@@ -1,7 +1,7 @@
 package com.searchengine.indexservice.services;
 
-import com.searchengine.indexservice.models.HtmlDocument;
-import com.searchengine.indexservice.models.SQSHtmlMetadata;
+import com.searchengine.indexservice.dto.HtmlDocument;
+import com.searchengine.indexservice.dto.SQSHtmlMetadata;
 
 import java.io.IOException;
 import java.util.List;

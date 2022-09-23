@@ -1,9 +1,6 @@
-package com.searchengine.searchservice.service.impl;
+package com.searchengine.searchservice.repository;
 
-import com.searchengine.searchservice.model.SearchTermUrlMetadata;
-import com.searchengine.searchservice.model.UrlMapping;
-import com.searchengine.searchservice.service.DatabaseSearchService;
-import com.searchengine.searchservice.service.helper.IndexingHelper;
+import com.searchengine.searchservice.entity.UrlMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,17 +8,14 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * created by nikunjagarwal on 21-09-2022
  */
 @Slf4j
 @Service
-public class MongoDatabaseSearchService implements DatabaseSearchService {
+public class MongoDBSearchRepo implements InvertedIndexSearchRepo {
 
     @Autowired
     private MongoTemplate mongoTemplate;

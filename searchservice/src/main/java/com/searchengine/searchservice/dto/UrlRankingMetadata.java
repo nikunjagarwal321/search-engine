@@ -1,4 +1,4 @@
-package com.searchengine.searchservice.model;
+package com.searchengine.searchservice.dto;
 
 import lombok.Builder;
 import lombok.Data;

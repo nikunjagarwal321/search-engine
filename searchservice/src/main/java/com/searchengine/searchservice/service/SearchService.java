@@ -1,6 +1,6 @@
 package com.searchengine.searchservice.service;
 
-import com.searchengine.searchservice.model.SearchRequest;
+import com.searchengine.searchservice.dto.SearchRequest;
 import org.springframework.http.ResponseEntity;
 
 /**

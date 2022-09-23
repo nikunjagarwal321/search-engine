@@ -1,13 +1,12 @@
 package com.searchengine.indexservice.services.impl;
 
 import com.searchengine.indexservice.constants.IndexingServiceEnum;
-import com.searchengine.indexservice.models.HtmlDocument;
-import com.searchengine.indexservice.models.SQSHtmlMetadata;
+import com.searchengine.indexservice.dto.HtmlDocument;
+import com.searchengine.indexservice.dto.SQSHtmlMetadata;
 import com.searchengine.indexservice.services.OrchestratorService;
 import com.searchengine.indexservice.services.UrlsHandlerService;
 import com.searchengine.indexservice.services.factory.IndexingServiceFactory;
 import com.searchengine.indexservice.services.factory.ParserFactory;
-import com.searchengine.indexservice.utils.FileHandlerUtil;
 import com.searchengine.indexservice.utils.JSONUtils;
 import com.searchengine.indexservice.utils.S3Utils;
 import org.springframework.beans.factory.annotation.Autowired;

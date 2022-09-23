@@ -1,8 +1,7 @@
 package com.searchengine.crawlerservice.service.impl;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.searchengine.crawlerservice.Util.AWSUtil;
-import com.searchengine.crawlerservice.Util.SQSUtil;
+import com.searchengine.crawlerservice.util.AWSUtil;
+import com.searchengine.crawlerservice.util.SQSUtil;
 import com.searchengine.crawlerservice.config.ConfigFactory;
 import com.searchengine.crawlerservice.dto.CrawlRequest;
 import com.searchengine.crawlerservice.dto.CrawlerUrlMetadata;

@@ -1,4 +1,4 @@
-package com.searchengine.indexservice.services.helper;
+package com.searchengine.indexservice.services.impl;
 
 import com.searchengine.indexservice.constants.Constants;
 import com.searchengine.indexservice.services.StemmingService;

@@ -1,6 +1,5 @@
-package com.searchengine.indexservice.dto;
+package com.searchengine.indexservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
