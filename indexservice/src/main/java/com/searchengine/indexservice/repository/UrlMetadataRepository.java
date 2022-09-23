@@ -41,4 +41,18 @@ public interface UrlMetadataRepository extends JpaRepository<UrlMetadata, String
     @Modifying
     @Query(value = "update url_metadata u set u.page_rank = :pageRank where u.url=:url", nativeQuery = true)
     int updatePagerank(@Param("pageRank")int pageRank, @Param("url")String url);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update url_metadata u set u.crawl_status = :crawlStatus, " +
+            "u.http_status_code = :httpStatusCode, u.error_message = :errorMessage" +
+            " where u.url=:urlId", nativeQuery = true)
+    int updateFailedUrl(@Param("crawlStatus")CrawlStatus crawlStatus, @Param("httpStatusCode")int httpStatusCode,
+                        @Param("errorMessage")String errorMessage, @Param("urlId")Long urlId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update url_metadata u set u.retry_count = :retryCount where u.url=:urlId", nativeQuery = true)
+    int updateRetryCount(@Param("retryCount")int retryCount,@Param("urlId")Long urlId);
+
 }

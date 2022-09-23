@@ -15,16 +15,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AWSConfig {
 
-    @Value("${queueUrl}")
-    String queueUrl;
-
     @Bean
     public AmazonSQSClient amazonSQSClient() {
-
         AmazonSQSClient sqsClient = new AmazonSQSClient();
-        String regionName = "us-west-2";
-        Region region = Region.getRegion(Regions.fromName(regionName));
-        sqsClient.setRegion(region);
+        sqsClient.setRegion(Region.getRegion(Regions.AP_SOUTH_1));
         return sqsClient;
     }
 

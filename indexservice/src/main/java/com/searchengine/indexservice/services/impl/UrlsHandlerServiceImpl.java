@@ -2,15 +2,19 @@ package com.searchengine.indexservice.services.impl;
 
 import com.searchengine.indexservice.dto.CrawlStatus;
 import com.searchengine.indexservice.dto.UrlMetadata;
+import com.searchengine.indexservice.models.CrawlerUrlMetadata;
 import com.searchengine.indexservice.models.HtmlDocument;
 import com.searchengine.indexservice.models.SQSHtmlMetadata;
 import com.searchengine.indexservice.repository.UrlMetadataRepository;
 import com.searchengine.indexservice.services.UrlsHandlerService;
+import com.searchengine.indexservice.utils.JSONUtils;
 import com.searchengine.indexservice.utils.UrlHandlerUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -26,6 +30,12 @@ public class UrlsHandlerServiceImpl implements UrlsHandlerService {
     @Autowired
     UrlMetadataRepository urlMetadataRepository;
 
+    @Autowired
+    SQSListenerImpl sqsListener;
+
+    @Value("${retry.count}")
+    int MAX_RETRY_COUNT;
+
 
     /**
      * Step 1 : update existing url metadata in the table
@@ -37,8 +47,8 @@ public class UrlsHandlerServiceImpl implements UrlsHandlerService {
      * @param htmlDocument
      */
     @Override
-    public void insertChildUrlsInRdsAndSqs(SQSHtmlMetadata sqsHtmlMetadata, HtmlDocument htmlDocument) {
-        log.info("");
+    public void insertChildUrlsInRdsAndSqs(SQSHtmlMetadata sqsHtmlMetadata, HtmlDocument htmlDocument) throws IOException{
+        log.info("Inside insertChildUrlsInRdsAndSqs() with htmlMetadata={}, htmlDocument={}", sqsHtmlMetadata, htmlDocument);
         //TODO : handle redirected url separately
 
         urlMetadataRepository.updateExistingUrl(sqsHtmlMetadata.getRedirectedUrl(), sqsHtmlMetadata.getS3Path(),
@@ -46,12 +56,28 @@ public class UrlsHandlerServiceImpl implements UrlsHandlerService {
         Set<String> childUrls = urlHandlerUtil.parseChildUrls(htmlDocument.getChildUrls(), sqsHtmlMetadata.getRedirectedUrl());//use redirect url as that is final url
         List<String> inScopeChildUrls = urlHandlerUtil.filterInScopeUrls(childUrls);
         sendChildUrlsForCrawling(inScopeChildUrls);
-
     }
 
+    /**
+     * If 4xx response, dont retry and fail immediately
+     * If 5xx response, retry if within retry range, else fail
+     * @param sqsHtmlMetadata
+     */
     @Override
-    public void updateCrawlingErrorUrls(SQSHtmlMetadata sqsHtmlMetadata) {
-
+    public void updateCrawlingErrorUrls(SQSHtmlMetadata sqsHtmlMetadata) throws IOException {
+        if(sqsHtmlMetadata.getStatus().is4xxClientError())  {
+            urlMetadataRepository.updateFailedUrl(CrawlStatus.FAILED, sqsHtmlMetadata.getStatus().value(), sqsHtmlMetadata.getErrorMessage(), sqsHtmlMetadata.getUrlId());
+        } else if (sqsHtmlMetadata.getStatus().is5xxServerError()) {
+            Optional<UrlMetadata> urlMetadata = urlMetadataRepository.findById(sqsHtmlMetadata.getUrlId().toString());
+            if(urlMetadata.isPresent()) {
+                if(urlMetadata.get().getRetryCount() <= MAX_RETRY_COUNT) {
+                    urlMetadataRepository.updateRetryCount(urlMetadata.get().getRetryCount()+1,sqsHtmlMetadata.getUrlId());
+                    sqsListener.sendMessage(JSONUtils.convertObjectToString(new CrawlerUrlMetadata(sqsHtmlMetadata.getUrlId(), sqsHtmlMetadata.getUrl())));
+                } else {
+                    urlMetadataRepository.updateFailedUrl(CrawlStatus.FAILED, sqsHtmlMetadata.getStatus().value(), sqsHtmlMetadata.getErrorMessage(), sqsHtmlMetadata.getUrlId());
+                }
+            }
+        }
     }
 
     /**
@@ -59,15 +85,32 @@ public class UrlsHandlerServiceImpl implements UrlsHandlerService {
      * Update pagerank of old child urls
      * @param inScopeChildUrls
      */
-    public void sendChildUrlsForCrawling(List<String> inScopeChildUrls) {
+    public void sendChildUrlsForCrawling(List<String> inScopeChildUrls) throws IOException{
         for(String childUrl : inScopeChildUrls) {
             ArrayList<UrlMetadata> childUrlExists = urlMetadataRepository.findByUrl(childUrl);
             if(childUrlExists.isEmpty()) {
                 UrlMetadata newUrl = UrlMetadata.builder().url(childUrl).crawlStatus(CrawlStatus.QUEUED).retryCount(0).pageRank(1).build();
                 urlMetadataRepository.save(newUrl);
-                //TODO: send to sqs
+                sqsListener.sendMessage(JSONUtils.convertObjectToString(new CrawlerUrlMetadata(newUrl.getUrlId(), newUrl.getUrl())));
             } else {
                 urlMetadataRepository.updatePagerank(childUrlExists.get(0).getPageRank() + 1, childUrl);
+            }
+        }
+    }
+
+    /**
+     * Starts crawling new urls if they does not exist in the database
+     * @param urls
+     * @throws IOException
+     */
+    @Override
+    public void insertNewUrlsForCrawling(List<String> urls) throws IOException {
+        for(String childUrl : urls) {
+            ArrayList<UrlMetadata> childUrlExists = urlMetadataRepository.findByUrl(childUrl);
+            if(childUrlExists.isEmpty()) {
+                UrlMetadata newUrl = UrlMetadata.builder().url(childUrl).crawlStatus(CrawlStatus.QUEUED).retryCount(0).pageRank(1).build();
+                urlMetadataRepository.save(newUrl);
+                sqsListener.sendMessage(JSONUtils.convertObjectToString(new CrawlerUrlMetadata(newUrl.getUrlId(), newUrl.getUrl())));
             }
         }
     }

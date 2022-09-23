@@ -1,14 +1,16 @@
-package com.searchengine.indexservice.services.impl;
+package com.searchengine.crawlerservice.service.impl;
 
+import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.*;
+import com.searchengine.crawlerservice.Util.JSONUtil;
+import com.searchengine.crawlerservice.dto.CrawlerUrlMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.model.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,11 +27,12 @@ public class SQSListenerImpl {
     private String crawlerUrlsSQSUrl;
 
     @Autowired
-    private OrchestratorServiceImpl orchestratorService;
+    private CrawlerServiceImpl crawlerService;
 
-    private SqsClient sqsClient = SqsClient.builder().region(Region.AP_SOUTH_1).build();
+    @Autowired
+    private AmazonSQSClient sqsClient;
 
-    /*add once we enable sqs read*/
+    /**to add once sqs in created */
 //    @Scheduled(fixedRate = 10000)
     public void poll() {
         receiveMessage();
@@ -39,8 +42,9 @@ public class SQSListenerImpl {
         log.info("Inside sendMessage");
 
         try {
-            SendMessageResponse sqsResponse = sqsClient.sendMessage(
-                    SendMessageRequest.builder().queueUrl(crawlerUrlsSQSUrl).messageBody(message).delaySeconds(10).build());
+            SendMessageResult sqsResponse = sqsClient.sendMessage(
+                    new SendMessageRequest().withQueueUrl(htmlMetadataSQSUrl).
+                            withMessageBody(message).withDelaySeconds(10));
             log.info("Send message : {}", sqsResponse);
         } catch (Exception e) {
             log.error("Error : {}", e);
@@ -52,16 +56,18 @@ public class SQSListenerImpl {
         log.info("Inside receiveMessage");
 
         try {
-            ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder().queueUrl(htmlMetadataSQSUrl)
-                    .maxNumberOfMessages(3).build();
-            ReceiveMessageResponse receiveMessageResponse = sqsClient.receiveMessage(receiveMessageRequest);
-            List<Message> messages = receiveMessageResponse.messages();
+            ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest().withQueueUrl(crawlerUrlsSQSUrl)
+                    .withMaxNumberOfMessages(3);
+            ReceiveMessageResult receiveMessageResponse = sqsClient.receiveMessage(receiveMessageRequest);
+            List<Message> messages = receiveMessageResponse.getMessages();
             log.info("Received messages : {}", messages);
+            List<CrawlerUrlMetadata> crawlerUrlMetadataList = new ArrayList<>();
             for (Message message : messages) {
                 log.info("Message : {}", message);
-                orchestratorService.startOrchestration(message);
+                crawlerUrlMetadataList.add(JSONUtil.convertObjectToObject(message.getBody(), CrawlerUrlMetadata.class));
                 deleteMessage(message);
             }
+            crawlerService.crawl(crawlerUrlMetadataList);
         } catch (Exception e) {
             log.error("Error : {}", e);
         }
@@ -70,8 +76,8 @@ public class SQSListenerImpl {
     public void deleteMessage(Message message) {
         log.info("Inside deleteMessage");
         try {
-            DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(htmlMetadataSQSUrl)
-                    .receiptHandle(message.receiptHandle()).build();
+            DeleteMessageRequest deleteMessageRequest = new DeleteMessageRequest().withQueueUrl(crawlerUrlsSQSUrl)
+                    .withReceiptHandle(message.getReceiptHandle());
             sqsClient.deleteMessage(deleteMessageRequest);
             log.info("Deleted message : {}", message);
         } catch (Exception e) {

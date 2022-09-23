@@ -22,8 +22,6 @@ public class AWSUtil {
     @Autowired
     AmazonS3Client amazonS3Client;
 
-    @Autowired
-    AmazonSQSClient amazonSQSClient;
 
     public Boolean addToS3(String container, String key, Document doc)
             throws  IllegalArgumentException {
