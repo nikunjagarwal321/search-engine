@@ -61,7 +61,7 @@ public class SearchServiceImpl implements SearchService {
     private Map<Long, UrlMetadata> getRelevantUrlsMetadata(List<UrlMapping> urlMappingList) {
         Set<Long> relevantUrlIds = new HashSet<>();
         for(UrlMapping urlMapping: urlMappingList) {
-            relevantUrlIds = urlMapping.getUrls().stream().map(SearchTermUrlMetadata::getUrlId).collect(Collectors.toSet());
+            relevantUrlIds.addAll(urlMapping.getUrls().stream().map(SearchTermUrlMetadata::getUrlId).collect(Collectors.toSet()));
         }
         List<UrlMetadata> urlMetadataList = urlMetadataRepository.findByUrlIdIn(relevantUrlIds);
         return urlMetadataList.stream().collect(Collectors.toMap(UrlMetadata::getUrlId, Function.identity()));
