@@ -3,7 +3,7 @@ Mini Search Engine which can search the web and display the relevant results for
 The web pages are crawled and inverted index is created and stored which is used to fetch the results while searching.
 
 ---
-##Design HLD
+## Design HLD
 The search engine has microservice architecture and contains 3 different microservices namely
 - Crawler Service
 - Indexer Service 
@@ -12,7 +12,7 @@ The search engine has microservice architecture and contains 3 different microse
 ![High level diagram](./searchengine.jpg)
 
 ---
-##Microservices
+## Microservices
 1. Crawler Service
    1. Picks up Urls to be crawled from SQS
    2. Downloads the HTML Content and stores it in s3
@@ -32,7 +32,7 @@ The search engine has microservice architecture and contains 3 different microse
    5. Displays top results
 
 ---
-###Prerequisites to run
+### Prerequisites to run
 1. AWS Local setup via cli
 2. 2 AWS SQS required for Crawler and Indexer Service
 3. S3 bucket setup in both Crawler and Indexer Service
