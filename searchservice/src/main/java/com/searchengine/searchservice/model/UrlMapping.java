@@ -16,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Document("search_mapping")
 public class UrlMapping {
-    @Indexed
     private String searchTerm;
     private List<SearchTermUrlMetadata> urls;
 }

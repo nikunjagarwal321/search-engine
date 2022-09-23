@@ -7,6 +7,7 @@ import com.searchengine.indexservice.models.HtmlDocument;
 import com.searchengine.indexservice.models.SQSHtmlMetadata;
 import com.searchengine.indexservice.repository.UrlMetadataRepository;
 import com.searchengine.indexservice.services.UrlsHandlerService;
+import com.searchengine.indexservice.utils.CrawledUrlsCounter;
 import com.searchengine.indexservice.utils.JSONUtils;
 import com.searchengine.indexservice.utils.UrlHandlerUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,7 @@ public class UrlsHandlerServiceImpl implements UrlsHandlerService {
 
         urlMetadataRepository.updateExistingUrl(sqsHtmlMetadata.getRedirectedUrl(), sqsHtmlMetadata.getS3Path(),
                 htmlDocument.getTitle(), CrawlStatus.CRAWLED, sqsHtmlMetadata.getStatus().value(), sqsHtmlMetadata.getUrlId());
-        Set<String> childUrls = urlHandlerUtil.parseChildUrls(htmlDocument.getChildUrls(), sqsHtmlMetadata.getRedirectedUrl());//use redirect url as that is final url
+        Set<String> childUrls = urlHandlerUtil.parseChildUrls(htmlDocument.getChildUrls(), sqsHtmlMetadata.getUrl());//TODO: use redirect url as that is final url
         List<String> inScopeChildUrls = urlHandlerUtil.filterInScopeUrls(childUrls);
         sendChildUrlsForCrawling(inScopeChildUrls);
     }
@@ -72,7 +73,7 @@ public class UrlsHandlerServiceImpl implements UrlsHandlerService {
             if(urlMetadata.isPresent()) {
                 if(urlMetadata.get().getRetryCount() <= MAX_RETRY_COUNT) {
                     urlMetadataRepository.updateRetryCount(urlMetadata.get().getRetryCount()+1,sqsHtmlMetadata.getUrlId());
-                    sqsListener.sendMessage(JSONUtils.convertObjectToString(new CrawlerUrlMetadata(sqsHtmlMetadata.getUrlId(), sqsHtmlMetadata.getUrl())));
+                    sendToSQSForCrawling(JSONUtils.convertObjectToString(new CrawlerUrlMetadata(sqsHtmlMetadata.getUrlId(), sqsHtmlMetadata.getUrl())));
                 } else {
                     urlMetadataRepository.updateFailedUrl(CrawlStatus.FAILED, sqsHtmlMetadata.getStatus().value(), sqsHtmlMetadata.getErrorMessage(), sqsHtmlMetadata.getUrlId());
                 }
@@ -91,7 +92,7 @@ public class UrlsHandlerServiceImpl implements UrlsHandlerService {
             if(childUrlExists.isEmpty()) {
                 UrlMetadata newUrl = UrlMetadata.builder().url(childUrl).crawlStatus(CrawlStatus.QUEUED).retryCount(0).pageRank(1).build();
                 urlMetadataRepository.save(newUrl);
-                sqsListener.sendMessage(JSONUtils.convertObjectToString(new CrawlerUrlMetadata(newUrl.getUrlId(), newUrl.getUrl())));
+                sendToSQSForCrawling(JSONUtils.convertObjectToString(new CrawlerUrlMetadata(newUrl.getUrlId(), newUrl.getUrl())));
             } else {
                 urlMetadataRepository.updatePagerank(childUrlExists.get(0).getPageRank() + 1, childUrl);
             }
@@ -112,6 +113,13 @@ public class UrlsHandlerServiceImpl implements UrlsHandlerService {
                 urlMetadataRepository.save(newUrl);
                 sqsListener.sendMessage(JSONUtils.convertObjectToString(new CrawlerUrlMetadata(newUrl.getUrlId(), newUrl.getUrl())));
             }
+        }
+    }
+
+    private void sendToSQSForCrawling(String message){
+        if(CrawledUrlsCounter.canSendForCrawling()){
+            sqsListener.sendMessage(message);
+            CrawledUrlsCounter.incrementCrawledUrlCounter();
         }
     }
 }

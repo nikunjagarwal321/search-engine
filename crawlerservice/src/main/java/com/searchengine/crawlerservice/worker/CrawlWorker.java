@@ -3,6 +3,7 @@ package com.searchengine.crawlerservice.worker;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.searchengine.crawlerservice.Util.AWSUtil;
 import com.searchengine.crawlerservice.Util.JSONUtil;
+import com.searchengine.crawlerservice.Util.SQSUtil;
 import com.searchengine.crawlerservice.dto.CrawlRequest;
 import com.searchengine.crawlerservice.dto.SQSHtmlMetadata;
 import com.searchengine.crawlerservice.service.impl.SQSListenerImpl;
@@ -19,11 +20,9 @@ import java.util.Date;
 @Slf4j
 public class CrawlWorker implements Runnable {
 
-    @Value("bucket")
-    String s3Bucket;
+    String s3Bucket = "scraper-beta";
 
-    @Autowired
-    SQSListenerImpl sqsListener;
+    final SQSUtil sqsUtil;
 
     final CrawlRequest crawlRequest;
 
@@ -31,9 +30,10 @@ public class CrawlWorker implements Runnable {
 
     final String User_Agent_Mozilla = "Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201";
 
-    public CrawlWorker(CrawlRequest crawlRequest, AWSUtil awsUtil) {
+    public CrawlWorker(CrawlRequest crawlRequest, AWSUtil awsUtil, SQSUtil sqsUtil) {
         this.crawlRequest = crawlRequest;
         this.awsUtil = awsUtil;
+        this.sqsUtil = sqsUtil;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class CrawlWorker implements Runnable {
                             s3Path(s3Path).status(HttpStatus.valueOf(response.statusCode())).
                             redirectedUrl(response.headers().get("location")).
                             lastCrawledTime(new Date().toString()).build();
-                    sqsListener.sendMessage(JSONUtil.convertObjectToString(sqsHtmlMetadata));
+                    sqsUtil.sendMessage(JSONUtil.convertObjectToString(sqsHtmlMetadata));
 
                     return;
                 } else {
@@ -77,6 +77,7 @@ public class CrawlWorker implements Runnable {
                 }
 
             } catch (Exception e) {
+                //TODO : send to sqs with error
                 log.error(e.getMessage() + crawlRequest.getUrl());
             }
         }

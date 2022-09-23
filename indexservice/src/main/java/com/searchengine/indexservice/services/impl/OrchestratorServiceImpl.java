@@ -50,8 +50,8 @@ public class OrchestratorServiceImpl implements OrchestratorService {
         }
         String s3FileContents = S3Utils.download(bucketName, sqsHtmlMetadata.getS3Path());
         HtmlDocument htmlDocument = parserFactory.getParser(sqsHtmlMetadata.getUrl()).parseHtmlDocument(sqsHtmlMetadata, s3FileContents);
-        urlsHandlerService.insertChildUrlsInRdsAndSqs(sqsHtmlMetadata, htmlDocument);
         indexingServiceFactory.getIndexingService(IndexingServiceEnum.MONGO_DB).createAndInsertInvertedIndexInDB(htmlDocument);
+        urlsHandlerService.insertChildUrlsInRdsAndSqs(sqsHtmlMetadata, htmlDocument);
     }
 
     //TODO : only for testing, remove later
@@ -60,10 +60,10 @@ public class OrchestratorServiceImpl implements OrchestratorService {
             urlsHandlerService.updateCrawlingErrorUrls(sqsHtmlMetadata);
             return;
         }
-//        String s3FileContents = S3Utils.download(bucketName, sqsHtmlMetadata.getS3Path());
-        String s3FileContents = FileHandlerUtil.readFromFile(sqsHtmlMetadata.getS3Path());
+        String s3FileContents = S3Utils.download(bucketName, sqsHtmlMetadata.getS3Path());
+//        String s3FileContents = FileHandlerUtil.readFromFile(sqsHtmlMetadata.getS3Path());
         HtmlDocument htmlDocument = parserFactory.getParser(sqsHtmlMetadata.getUrl()).parseHtmlDocument(sqsHtmlMetadata, s3FileContents);
-        urlsHandlerService.insertChildUrlsInRdsAndSqs(sqsHtmlMetadata, htmlDocument);
-//        indexingServiceFactory.getIndexingService(IndexingServiceEnum.MONGO_DB).createAndInsertInvertedIndexInDB(htmlDocument);
+        indexingServiceFactory.getIndexingService(IndexingServiceEnum.MONGO_DB).createAndInsertInvertedIndexInDB(htmlDocument);
+//        urlsHandlerService.insertChildUrlsInRdsAndSqs(sqsHtmlMetadata, htmlDocument);
     }
 }

@@ -30,7 +30,7 @@ public class SQSListenerImpl {
     private SqsClient sqsClient = SqsClient.builder().region(Region.AP_SOUTH_1).build();
 
     /*add once we enable sqs read*/
-//    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 10000)
     public void poll() {
         receiveMessage();
     }
@@ -40,7 +40,7 @@ public class SQSListenerImpl {
 
         try {
             SendMessageResponse sqsResponse = sqsClient.sendMessage(
-                    SendMessageRequest.builder().queueUrl(crawlerUrlsSQSUrl).messageBody(message).delaySeconds(10).build());
+                    SendMessageRequest.builder().queueUrl(crawlerUrlsSQSUrl).messageBody(message).messageGroupId("100").build());
             log.info("Send message : {}", sqsResponse);
         } catch (Exception e) {
             log.error("Error : {}", e);

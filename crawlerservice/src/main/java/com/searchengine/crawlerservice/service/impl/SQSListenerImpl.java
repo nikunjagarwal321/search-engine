@@ -20,8 +20,6 @@ import java.util.List;
 @Service
 public class SQSListenerImpl {
 
-    @Value("${sqs.htmlmetadata.url}")
-    private String htmlMetadataSQSUrl;
 
     @Value("${sqs.crawlerurls.url}")
     private String crawlerUrlsSQSUrl;
@@ -33,22 +31,9 @@ public class SQSListenerImpl {
     private AmazonSQSClient sqsClient;
 
     /**to add once sqs in created */
-//    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 10000)
     public void poll() {
         receiveMessage();
-    }
-
-    public void sendMessage(String message) {
-        log.info("Inside sendMessage");
-
-        try {
-            SendMessageResult sqsResponse = sqsClient.sendMessage(
-                    new SendMessageRequest().withQueueUrl(htmlMetadataSQSUrl).
-                            withMessageBody(message).withDelaySeconds(10));
-            log.info("Send message : {}", sqsResponse);
-        } catch (Exception e) {
-            log.error("Error : {}", e);
-        }
     }
 
 
@@ -64,7 +49,7 @@ public class SQSListenerImpl {
             List<CrawlerUrlMetadata> crawlerUrlMetadataList = new ArrayList<>();
             for (Message message : messages) {
                 log.info("Message : {}", message);
-                crawlerUrlMetadataList.add(JSONUtil.convertObjectToObject(message.getBody(), CrawlerUrlMetadata.class));
+                crawlerUrlMetadataList.add(JSONUtil.convertStringToObject(message.getBody(), CrawlerUrlMetadata.class));
                 deleteMessage(message);
             }
             crawlerService.crawl(crawlerUrlMetadataList);
