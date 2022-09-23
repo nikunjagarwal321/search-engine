@@ -1,15 +1,24 @@
 package com.searchengine.crawlerservice.worker;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.searchengine.crawlerservice.Util.AWSUtil;
+import com.searchengine.crawlerservice.util.AWSUtil;
+import com.searchengine.crawlerservice.util.JSONUtil;
+import com.searchengine.crawlerservice.util.SQSUtil;
 import com.searchengine.crawlerservice.dto.CrawlRequest;
+import com.searchengine.crawlerservice.dto.SQSHtmlMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.http.HttpStatus;
+
+import java.util.Date;
 
 @Slf4j
 public class CrawlWorker implements Runnable {
+
+    String s3Bucket = "scraper-beta";
+
+    final SQSUtil sqsUtil;
 
     final CrawlRequest crawlRequest;
 
@@ -17,9 +26,10 @@ public class CrawlWorker implements Runnable {
 
     final String User_Agent_Mozilla = "Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201";
 
-    public CrawlWorker(CrawlRequest crawlRequest, AWSUtil awsUtil) {
+    public CrawlWorker(CrawlRequest crawlRequest, AWSUtil awsUtil, SQSUtil sqsUtil) {
         this.crawlRequest = crawlRequest;
         this.awsUtil = awsUtil;
+        this.sqsUtil = sqsUtil;
     }
 
     @Override
@@ -43,11 +53,17 @@ public class CrawlWorker implements Runnable {
                 if (response.statusCode() == 200) {
                     //TODO: Add more checks to verify partial pages
                     log.info("Url Crawled Successfully: {}", crawlRequest.getUrl());
-                    awsUtil.addToS3("product-scraper-oregon-beta", crawlRequest.getUrl(),doc);
-
+                    String s3Path = crawlRequest.getUrlId().toString();
+                    awsUtil.addToS3(s3Bucket, s3Path, doc);
 
                     // 1. Push doc to the s3
                     // 2.event to sqs which would read by parser
+                    SQSHtmlMetadata sqsHtmlMetadata = SQSHtmlMetadata.builder().
+                            urlId(crawlRequest.getUrlId()).url(crawlRequest.getUrl()).
+                            s3Path(s3Path).status(HttpStatus.valueOf(response.statusCode())).
+                            redirectedUrl(response.headers().get("location")).
+                            lastCrawledTime(new Date().toString()).build();
+                    sqsUtil.sendMessage(JSONUtil.convertObjectToString(sqsHtmlMetadata));
 
                     return;
                 } else {
@@ -57,6 +73,7 @@ public class CrawlWorker implements Runnable {
                 }
 
             } catch (Exception e) {
+                //TODO : send to sqs with error
                 log.error(e.getMessage() + crawlRequest.getUrl());
             }
         }

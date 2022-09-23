@@ -1,5 +1,6 @@
 package com.searchengine.crawlerservice.controller;
 
+import com.searchengine.crawlerservice.dto.CrawlerUrlMetadata;
 import com.searchengine.crawlerservice.service.CrawlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class crawlerController {
 
 
     @PostMapping("/triggerCrawl")
-    public ResponseEntity<String> sendForcrawl( @RequestBody List<String> urls) {
+    public ResponseEntity<String> sendForcrawl( @RequestBody List<CrawlerUrlMetadata> urls) {
 
         crawlerService.crawl(urls);
         ResponseEntity<String> responseEntity = new ResponseEntity("Sent for crawling", HttpStatus.OK);

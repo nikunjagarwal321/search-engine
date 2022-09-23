@@ -25,10 +25,7 @@ public class S3Utils {
     //TODO: modify the functions if we use file instead of string
     private static S3Client s3Client = S3Client.builder().region(Region.AP_SOUTH_1).build();
 
-    @Value("${bucket}")
-    private static String bucketName;
-
-    public static void upload(String s3Filename, String localFilePath){
+    public static void upload(String bucketName, String s3Filename, String localFilePath){
         log.info("Inside upload");
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -42,7 +39,7 @@ public class S3Utils {
         log.info("File uploaded successfully");
     }
 
-    public static String download(String s3Filename) {
+    public static String download(String bucketName, String s3Filename) {
         log.info("Inside download");
         GetObjectRequest getObject = GetObjectRequest.builder()
                 .bucket(bucketName)
@@ -53,7 +50,7 @@ public class S3Utils {
         return convertS3FileToString(response);
     }
 
-    public static void delete(String s3Filename){
+    public static void delete(String bucketName, String s3Filename){
         log.info("Inside delete");
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
@@ -69,7 +66,6 @@ public class S3Utils {
         String file = "";
         try {
             while ((line = reader.readLine()) != null) {
-                log.info(line);
                 file = file + line + "\n" ;
             }
             log.info("File Contents : " + file);

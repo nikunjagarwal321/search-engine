@@ -5,14 +5,17 @@ package com.searchengine.crawlerservice.dto;
  * The request which is used for crawling pages.
  */
 public class CrawlRequest {
+    Long urlId;
     String url;
     int retry;
-    int deepCrawlStage = 0;
 
-    public CrawlRequest(String url, int retry) {
+    public CrawlRequest(Long urlId, String url, int retry) {
+        this.urlId = urlId;
         this.url = url;
         this.retry = retry;
     }
+
+    public Long getUrlId(){return urlId;}
 
     public String getUrl() {
         return url;

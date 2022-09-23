@@ -1,11 +1,11 @@
-package com.searchengine.indexservice.models;
+package com.searchengine.indexservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * created by nikunjagarwal on 01-09-2022
@@ -15,9 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class HtmlDocument {
-    private Integer urlId;
+    private Long urlId;
     private String url;
     private String title;
     private String body;
-    private List<String> childUrls;
+    private Set<String> childUrls;
 }

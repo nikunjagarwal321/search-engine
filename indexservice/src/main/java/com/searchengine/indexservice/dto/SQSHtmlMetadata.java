@@ -1,4 +1,4 @@
-package com.searchengine.indexservice.models;
+package com.searchengine.indexservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SQSHtmlMetadata {
-    private Integer urlId;
+    private Long urlId;
     private String url;
     private String redirectedUrl;
     private HttpStatus status;
