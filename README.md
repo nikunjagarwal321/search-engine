@@ -12,7 +12,7 @@ The search engine has microservice architecture and contains 3 different microse
 ![High level diagram](./searchengine.jpg)
 
 ---
-## Microservices
+## Microservices & their flow 
 1. Crawler Service
    1. Picks up Urls to be crawled from SQS
    2. Downloads the HTML Content and stores it in s3
@@ -37,3 +37,23 @@ The search engine has microservice architecture and contains 3 different microse
 2. 2 AWS SQS required for Crawler and Indexer Service
 3. S3 bucket setup in both Crawler and Indexer Service
 4. Local RDS and MongoDB setup. The config needs to be updated in Indexer and Search Service
+
+#### Steps to run
+- Check each of the application.properties file and update different configs like sqs url, mongo and rds url and creds
+- Can also change the port in the appliaction.properties file
+- In indexservice, Constants.java file, change the MAX_NUMBER_OF_CRAWLED_PAGES to increase the number of crawled pages per run. This was done for testing to control AWS resourcce costs.
+- Once the configs are set correctly, start different services on different ports using java/mvn commands
+
+
+---
+#### Future Scope
+
+1. While searching, search for synonyms as well
+2. Implement autocomplete system using Trie
+3. Improve Ranking algo → together words get higher search rank  
+---
+#### References
+
+- [Inverted Index](https://www.educative.io/answers/what-is-an-inverted-index)
+- [Porter Stemming Algorithm](https://vijinimallawaarachchi.com/2017/05/09/porter-stemming-algorithm/)
+- [Ranking Factors at Goggle](https://www.google.com/search/howsearchworks/how-search-works/ranking-results/)
